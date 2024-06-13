@@ -22,6 +22,7 @@ jobs:
       uses: google-github-actions/setup-gcloud@v1
       with:
         project_id: quri-cloud-dev
+        install_components: beta
 
     - name: Configure Docker to use Artifact Registry
       run: gcloud auth configure-docker asia-docker.pkg.dev
