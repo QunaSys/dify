@@ -1,0 +1,47 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - "cloudruntest"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        service_account_key: ${{ secrets.QURI_CLOUD_DEV_SERVICE_ACCOUNT }}
+        project_id: quri-cloud-dev
+        export_default_credentials: true
+
+    - name: Configure Docker to use Artifact Registry
+      run: gcloud auth configure-docker asia-docker.pkg.dev
+
+    - name: Build Docker images
+      run: |
+        docker build -t asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-api:latest -f ./api/Dockerfile ./api
+        docker build -t asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-web:latest -f ./web/Dockerfile ./web
+
+    - name: Pull and tag necessary Docker images from Docker Hub
+      run: |
+        docker pull langgenius/dify-sandbox:latest
+        docker pull nginx:latest
+        docker tag langgenius/dify-sandbox:latest asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-sandbox:latest
+        docker tag nginx:latest asia-docker.pkg.dev/quri-artifact/dify-image/nginx:latest
+
+    - name: Push Docker images to Artifact Registry
+      run: |
+        docker push asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-api:latest
+        docker push asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-web:latest
+        docker push asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-sandbox:latest
+        docker push asia-docker.pkg.dev/quri-artifact/dify-image/nginx:latest
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud beta run services replace ./dify-qunasys.yaml --project=quri-cloud-dev

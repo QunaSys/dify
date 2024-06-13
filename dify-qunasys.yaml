@@ -1,0 +1,378 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: dify-qunasys
+  namespace: '277054394945'
+  selfLink: /apis/serving.knative.dev/v1/namespaces/277054394945/services/dify-qunasys
+  uid: cc2d70e0-74e4-4d99-9861-269d83723ab1
+  resourceVersion: AAYaIcmG+QY
+  generation: 20
+  creationTimestamp: '2024-05-29T06:51:32.577483Z'
+  labels:
+    cloud.googleapis.com/location: asia-northeast1
+  annotations:
+    serving.knative.dev/creator: yamaguchi@qunasys.com
+    serving.knative.dev/lastModifier: yamaguchi@qunasys.com
+    run.googleapis.com/client-name: cloud-console
+    run.googleapis.com/launch-stage: BETA
+    run.googleapis.com/operation-id: 4120c782-0e76-4e7b-a8a1-4b0bbe96e5fc
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+spec:
+  template:
+    metadata:
+      labels:
+        client.knative.dev/nonce: a79160ad-d124-4b04-a3ee-547917a1b935
+        run.googleapis.com/startupProbeType: Default
+      annotations:
+        autoscaling.knative.dev/maxScale: '100'
+        autoscaling.knative.dev/minScale: '1'
+        run.googleapis.com/client-name: cloud-console
+        run.googleapis.com/cloudsql-instances: quri-cloud:asia-northeast1:dify-qunasys
+        run.googleapis.com/vpc-access-connector: projects/quri-cloud/locations/asia-northeast1/connectors/dify-qunasys-vpcconn
+        run.googleapis.com/vpc-access-egress: all-traffic
+        run.googleapis.com/startup-cpu-boost: 'true'
+        run.googleapis.com/container-dependencies: '{"dify-web-1":["dify-api-1","dify-api-2","dify-web-2","dify-sandbox-1"]}'
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: quri-api-first@quri-cloud.iam.gserviceaccount.com
+      containers:
+      - name: dify-web-1
+        image: asia-docker.pkg.dev/quri-artifact/quri-image/nginx@sha256:72ddcf8b39351a01d46bc9980e661dcbc583d1ed565c0bcb1e9efc114c95ed14
+        ports:
+        - name: http1
+          containerPort: 80
+        env:
+        - name: CONSOLE_API_URL
+        - name: APP_API_URL
+        - name: SENTRY_DSN
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        volumeMounts:
+        - name: dify-qunasys-nginx-config
+          mountPath: /etc/nginx
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          tcpSocket:
+            port: 80
+      - name: dify-api-1
+        image: asia-docker.pkg.dev/quri-artifact/quri-image/langgenius/dify-api@sha256:781b6ce9c2e851c3a8d4482236f2985c37a90149ecd8de6de30c6716ea3e9033
+        env:
+        - name: MODE
+          value: api
+        - name: DB_PORT
+          value: '5432'
+        - name: MIGRATION_ENABLED
+          value: 'true'
+        - name: REDIS_PORT
+          value: '6379'
+        - name: REDIS_USE_SSL
+          value: 'false'
+        - name: REDIS_DB
+          value: '0'
+        - name: CELERY_BROKER_URL
+          value: redis://:@10.23.33.3:6379/1
+        - name: BROKER_USE_SSL
+          value: 'true'
+        - name: VECTOR_STORE
+          value: pgvector
+        - name: PGVECTOR_PORT
+          value: '5432'
+        - name: LOG_LEVEL
+          value: DEBUG
+        - name: STORAGE_TYPE
+          value: local
+        - name: CONSOLE_API_URL
+          value: https://dify-qunasys-ionrcykpaq-an.a.run.app
+        - name: CONSOLE_WEB_URL
+          value: https://dify-qunasys-ionrcykpaq-an.a.run.app
+        - name: SERVICE_API_URL
+          value: https://dify-qunasys-ionrcykpaq-an.a.run.app
+        - name: APP_WEB_URL
+          value: https://dify-qunasys-ionrcykpaq-an.a.run.app
+        - name: REDIS_PASSWORD
+        - name: MAIL_DEFAULT_SEND_FROM
+          value: yamaguchi@qunasys.com
+        - name: MAIL_TYPE
+          value: smtp
+        - name: SMTP_SERVER
+          value: smtp.gmail.com
+        - name: SMTP_USE_TLS
+          value: 'true'
+        - name: SMTP_PORT
+          value: '587'
+        - name: SMTP_USERNAME
+          value: yamaguchi@qunasys.com
+        - name: CODE_EXECUTION_ENDPOINT
+          value: http://localhost:8194
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_PASSWORD
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_SECRET_KEY
+        - name: PGVECTOR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_PASSWORD
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_DATABASE
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_HOST
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_USERNAME
+        - name: REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_REDIS_HOST
+        - name: PGVECTOR_USER
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_USERNAME
+        - name: PGVECTOR_HOST
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_HOST
+        - name: PGVECTOR_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_DATABASE
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_SMTP_PASSWORD
+        - name: CODE_EXECUTION_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_SECRET_KEY
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+        volumeMounts:
+        - name: dify-qunasys-volumes-app-storage
+          mountPath: /app/api/storage
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          tcpSocket:
+            port: 5001
+      - name: dify-api-2
+        image: asia-docker.pkg.dev/quri-artifact/quri-image/langgenius/dify-api@sha256:781b6ce9c2e851c3a8d4482236f2985c37a90149ecd8de6de30c6716ea3e9033
+        env:
+        - name: MODE
+          value: worker
+        - name: DB_PORT
+          value: '5432'
+        - name: REDIS_PORT
+          value: '6379'
+        - name: REDIS_USE_SSL
+          value: 'false'
+        - name: REDIS_DB
+          value: '0'
+        - name: CELERY_BROKER_URL
+          value: redis://:@10.23.33.3:6379/1
+        - name: BROKER_USE_SSL
+          value: 'true'
+        - name: VECTOR_STORE
+          value: pgvector
+        - name: PGVECTOR_PORT
+          value: '5432'
+        - name: LOG_LEVEL
+          value: DEBUG
+        - name: STORAGE_TYPE
+          value: local
+        - name: CONSOLE_WEB_URL
+          value: https://dify-qunasys-ionrcykpaq-an.a.run.app
+        - name: REDIS_PASSWORD
+        - name: MAIL_DEFAULT_SEND_FROM
+          value: yamaguchi@qunasys.com
+        - name: MAIL_TYPE
+          value: smtp
+        - name: SMTP_SERVER
+          value: smtp.gmail.com
+        - name: SMTP_PORT
+          value: '587'
+        - name: SMTP_USERNAME
+          value: yamaguchi@qunasys.com
+        - name: SMTP_USE_TLS
+          value: 'true'
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_PASSWORD
+        - name: PGVECTOR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_PASSWORD
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_SECRET_KEY
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_USERNAME
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_HOST
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_DATABASE
+        - name: REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_REDIS_HOST
+        - name: PGVECTOR_USER
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_USERNAME
+        - name: PGVECTOR_HOST
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_HOST
+        - name: PGVECTOR_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_DB_DATABASE
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_SMTP_PASSWORD
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 512Mi
+        volumeMounts:
+        - name: dify-qunasys-volumes-app-storage
+          mountPath: /app/api/storage
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          tcpSocket:
+            port: 5001
+      - name: dify-web-2
+        image: asia-docker.pkg.dev/quri-artifact/quri-image/langgenius/dify-web@sha256:107815e4b5f5f2c548d4e8741d03f073db564c6e4d91fca9a835dbe3718eaebb
+        env:
+        - name: CONSOLE_API_URL
+          value: https://dify-qunasys-ionrcykpaq-an.a.run.app
+        - name: APP_API_URL
+          value: https://dify-qunasys-ionrcykpaq-an.a.run.app
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          tcpSocket:
+            port: 3000
+      - name: dify-sandbox-1
+        image: asia-docker.pkg.dev/quri-artifact/quri-image/langgenius/dify-sandbox@sha256:8482c54d8e09d154e81f07908ae28e85a3945e2f52a277e289a3d7fae76a9aa5
+        env:
+        - name: SANDBOX_PORT
+          value: '8194'
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: DIFY_SECRET_KEY
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        volumeMounts:
+        - name: dify-qunasys-sandbox
+          mountPath: /dependencies
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          tcpSocket:
+            port: 8194
+      volumes:
+      - name: dify-qunasys-volumes-app-storage
+        csi:
+          driver: gcsfuse.run.googleapis.com
+          volumeAttributes:
+            bucketName: dify-qunasys-volumes-app-storage
+      - name: dify-qunasys-nginx-config
+        csi:
+          driver: gcsfuse.run.googleapis.com
+          volumeAttributes:
+            bucketName: dify-qunasys-nginx-config
+      - name: dify-qunasys-sandbox
+        csi:
+          driver: gcsfuse.run.googleapis.com
+          volumeAttributes:
+            bucketName: dify-qunasys-sandbox
+      - name: dify-qunasys-ssrf-proxy
+        csi:
+          driver: gcsfuse.run.googleapis.com
+          volumeAttributes:
+            bucketName: dify-qunasys-ssrf-proxy
+  traffic:
+  - percent: 100
+    latestRevision: true
+status:
+  observedGeneration: 20
+  conditions:
+  - type: Ready
+    status: 'True'
+    lastTransitionTime: '2024-06-05T10:11:17.572870Z'
+  - type: ConfigurationsReady
+    status: 'True'
+    lastTransitionTime: '2024-05-29T06:51:32.666862Z'
+  - type: RoutesReady
+    status: 'True'
+    lastTransitionTime: '2024-06-05T10:11:17.524019Z'
+  latestReadyRevisionName: dify-qunasys-00020-7jv
+  latestCreatedRevisionName: dify-qunasys-00020-7jv
+  traffic:
+  - revisionName: dify-qunasys-00020-7jv
+    percent: 100
+    latestRevision: true
+  url: https://dify-qunasys-ionrcykpaq-an.a.run.app
+  address:
+    url: https://dify-qunasys-ionrcykpaq-an.a.run.app
