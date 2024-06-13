@@ -24,7 +24,7 @@ spec:
       serviceAccountName: githubaction@quri-cloud-dev.iam.gserviceaccount.com
       containers:
       - name: dify-web-1
-        image: asia-docker.pkg.dev/quri-artifact/quri-image/nginx@sha256:0db204f933b6d1def0c0c15578f61a80091f8316b04150918413fc4d5c87be69
+        image: asia-docker.pkg.dev/quri-artifact/dify-image/nginx@sha256:0db204f933b6d1def0c0c15578f61a80091f8316b04150918413fc4d5c87be69
         ports:
         - name: http1
           containerPort: 80
@@ -46,7 +46,7 @@ spec:
           tcpSocket:
             port: 80
       - name: dify-api-1
-        image: asia-docker.pkg.dev/quri-artifact/quri-image/langgenius/dify-api@sha256:4525483b43bd650b8c5c8d987646e743a51ee61b2108aaa899b1466abae6c6f5
+        image: asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-api@sha256:4525483b43bd650b8c5c8d987646e743a51ee61b2108aaa899b1466abae6c6f5
         env:
         - name: MODE
           value: api
@@ -169,7 +169,7 @@ spec:
           tcpSocket:
             port: 5001
       - name: dify-api-2
-        image: asia-docker.pkg.dev/quri-artifact/quri-image/langgenius/dify-api@sha256:4525483b43bd650b8c5c8d987646e743a51ee61b2108aaa899b1466abae6c6f5
+        image: asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-api@sha256:4525483b43bd650b8c5c8d987646e743a51ee61b2108aaa899b1466abae6c6f5
         env:
         - name: MODE
           value: worker
@@ -277,7 +277,7 @@ spec:
           tcpSocket:
             port: 5001
       - name: dify-web-2
-        image: asia-docker.pkg.dev/quri-artifact/quri-image/langgenius/dify-web@sha256:0c26d768070d4ff35dbac5e5c446f60c5aa2623916494b368fbb2cd9cd1a9b24
+        image: asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-web@sha256:0c26d768070d4ff35dbac5e5c446f60c5aa2623916494b368fbb2cd9cd1a9b24
         env:
         - name: CONSOLE_API_URL
           value: https://dify-qunasys-fm33oqhfpq-an.a.run.app
@@ -294,7 +294,7 @@ spec:
           tcpSocket:
             port: 3000
       - name: dify-sandbox-1
-        image: asia-docker.pkg.dev/quri-artifact/quri-image/langgenius/dify-sandbox@sha256:c137d5e0632872f6b05fde5fa55584242d42c3fef8954258da5b8574a6b6e68e
+        image: asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-sandbox@sha256:c137d5e0632872f6b05fde5fa55584242d42c3fef8954258da5b8574a6b6e68e
         env:
         - name: SANDBOX_PORT
           value: '8194'
