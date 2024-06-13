@@ -2,22 +2,9 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: dify-qunasys
-  namespace: '277054394945'
-  selfLink: /apis/serving.knative.dev/v1/namespaces/277054394945/services/dify-qunasys
-  uid: cc2d70e0-74e4-4d99-9861-269d83723ab1
-  resourceVersion: AAYaIcmG+QY
-  generation: 20
-  creationTimestamp: '2024-05-29T06:51:32.577483Z'
+  namespace: 'quri-cloud-dev'
   labels:
     cloud.googleapis.com/location: asia-northeast1
-  annotations:
-    serving.knative.dev/creator: yamaguchi@qunasys.com
-    serving.knative.dev/lastModifier: yamaguchi@qunasys.com
-    run.googleapis.com/client-name: cloud-console
-    run.googleapis.com/launch-stage: BETA
-    run.googleapis.com/operation-id: 4120c782-0e76-4e7b-a8a1-4b0bbe96e5fc
-    run.googleapis.com/ingress: all
-    run.googleapis.com/ingress-status: all
 spec:
   template:
     metadata:
@@ -28,15 +15,15 @@ spec:
         autoscaling.knative.dev/maxScale: '100'
         autoscaling.knative.dev/minScale: '1'
         run.googleapis.com/client-name: cloud-console
-        run.googleapis.com/cloudsql-instances: quri-cloud:asia-northeast1:dify-qunasys
-        run.googleapis.com/vpc-access-connector: projects/quri-cloud/locations/asia-northeast1/connectors/dify-qunasys-vpcconn
+        run.googleapis.com/cloudsql-instances: quri-cloud-dev:asia-northeast1:dify-qunasys
+        run.googleapis.com/vpc-access-connector: projects/quri-cloud-dev/locations/asia-northeast1/connectors/dify-qunasys-vpcconn
         run.googleapis.com/vpc-access-egress: all-traffic
         run.googleapis.com/startup-cpu-boost: 'true'
         run.googleapis.com/container-dependencies: '{"dify-web-1":["dify-api-1","dify-api-2","dify-web-2","dify-sandbox-1"]}'
     spec:
       containerConcurrency: 80
       timeoutSeconds: 300
-      serviceAccountName: quri-api-first@quri-cloud.iam.gserviceaccount.com
+      serviceAccountName: githubaction@quri-cloud-dev.iam.gserviceaccount.com
       containers:
       - name: dify-web-1
         image: asia-docker.pkg.dev/quri-artifact/quri-image/nginx@sha256:72ddcf8b39351a01d46bc9980e661dcbc583d1ed565c0bcb1e9efc114c95ed14

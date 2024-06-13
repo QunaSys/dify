@@ -48,4 +48,4 @@ jobs:
 
     - name: Deploy to Cloud Run
       run: |
-        gcloud beta run services replace ./dify-qunasys.yaml --project=quri-cloud-dev
+        gcloud beta run services replace ./dify-qunasys.yaml
