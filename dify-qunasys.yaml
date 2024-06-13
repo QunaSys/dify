@@ -2,7 +2,7 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: dify-qunasys
-  namespace: 'quri-cloud-dev'
+  namespace: '310064554949'
   labels:
     cloud.googleapis.com/location: asia-northeast1
 spec:
