@@ -17,7 +17,7 @@ jobs:
       uses: google-github-actions/setup-gcloud@v1
       with:
         service_account_key: ${{ secrets.QURI_CLOUD_DEV_SERVICE_ACCOUNT }}
-        project_id: quri-cloud-dev
+        project_id: quri-artifact
         export_default_credentials: true
 
     - name: Configure Docker to use Artifact Registry
@@ -41,6 +41,13 @@ jobs:
         docker push asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-web:latest
         docker push asia-docker.pkg.dev/quri-artifact/dify-image/langgenius/dify-sandbox:latest
         docker push asia-docker.pkg.dev/quri-artifact/dify-image/nginx:latest
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        service_account_key: ${{ secrets.QURI_CLOUD_DEV_SERVICE_ACCOUNT }}
+        project_id: quri-cloud-dev
+        export_default_credentials: true
 
     - name: Deploy to Cloud Run
       run: |
